@@ -1,0 +1,162 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Weng Xuetian <wengxt@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-07 10:09-0700\n"
+"PO-Revision-Date: 2016-07-07 10:08-0800\n"
+"Last-Translator: Weng Xuetian <wengxt@gmail.com>\n"
+"Language-Team: Chinese <kde-i18n-doc@kde.org>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: main.py:48 main.py:64
+msgid "Missing argument."
+msgstr "缺少参数。"
+
+#: main.py:77
+msgid "You're not super user."
+msgstr "你不是人家的主人啦！"
+
+#: main.py:184
+msgid "Nothing to play"
+msgstr "没有可以播放的歌曲"
+
+#: main.py:186
+#, python-brace-format
+msgid ""
+"Now Playing:\n"
+"{0}"
+msgstr ""
+"正在播放：\n"
+"{0}"
+
+#: main.py:191
+#, python-brace-format
+msgid ""
+"Number of Songs: {0}\n"
+"Number of Albums: {1}"
+msgstr ""
+"歌曲数：{0}\n"
+"专辑数：{1}"
+
+#: main.py:206 main.py:224 main.py:231
+msgid "No matched song."
+msgstr "没有匹配的歌曲。"
+
+#: main.py:208
+#, python-brace-format
+msgid "Search failed. Error: {0}"
+msgstr "搜索失败。错误：{0}"
+
+#: main.py:213
+#, python-brace-format
+msgid "Adding song {0}"
+msgstr "添加歌曲 {0}"
+
+#: main.py:215
+#, python-brace-format
+msgid "Adding song {0} failed {1}"
+msgstr "添加歌曲 {0} 失败 {1}"
+
+#: main.py:241
+msgid "No matched path."
+msgstr "没有匹配的路径。"
+
+#: main.py:245
+msgid "Welcome to MPD DJ!"
+msgstr "欢迎使用点歌姬哟～！"
+
+#: main.py:254
+#, python-brace-format
+msgid "Play stream via: {0}"
+msgstr "播放地址：{0}"
+
+#: main.py:262
+msgid "Nothing :("
+msgstr "什么也没有 :("
+
+#: main.py:273
+msgid "Too many songs already, please wait."
+msgstr "你们要把人家玩坏啦！快去歇会！"
+
+#: main.py:276
+msgid "This song is already ordered."
+msgstr "这首歌已经被点过了呢～"
+
+#: main.py:280
+#, python-brace-format
+msgid "Ordering {0}"
+msgstr "正在点播 {0}"
+
+#: main.py:282
+#, python-brace-format
+msgid "Failed to order {0}"
+msgstr "点播 {0} 失败"
+
+#: main.py:293
+msgid "Quota used up."
+msgstr "你玩人家玩得太多啦！去歇会！"
+
+#: main.py:307
+msgid "No history yet."
+msgstr "还没有人陪我玩呢 :'("
+
+#: main.py:312
+msgid "start - Description"
+msgstr "start - 说明"
+
+#: main.py:313
+msgid "add - Add song"
+msgstr "add - 添加歌曲"
+
+#: main.py:314
+msgid "sample - Randomly list some songs"
+msgstr "sample - 随机列出一些歌曲 "
+
+#: main.py:315
+msgid "status - DJ Status"
+msgstr "status - 点歌姬的状态"
+
+#: main.py:316
+msgid "stats - DJ stats"
+msgstr "stats - 点歌姬的统计信息"
+
+#: main.py:317
+msgid "order - Order a song"
+msgstr "order - 点播歌曲"
+
+#: main.py:318
+msgid "history - Order history"
+msgstr "history - 点播历史"
+
+#: main.py:319
+msgid "search - Search song"
+msgstr "search - 搜索歌曲"
+
+#: main.py:320
+msgid "searchadd - Search and add first match song"
+msgstr "searchadd - 搜索并添加第一首匹配歌曲"
+
+#: main.py:321
+msgid "playlist - Show current playlist"
+msgstr "playlist - 显示当前播放列表"
+
+#: main.py:322
+msgid "list - List files"
+msgstr "list - 列出文件"
+
+#: main.py:323
+msgid "stream - Get stream address"
+msgstr "stream - 获得流地址"
+
+#: main.py:324
+msgid "help - Show this help"
+msgstr "help - 显示本帮助"

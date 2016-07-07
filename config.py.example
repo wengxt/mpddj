@@ -1,0 +1,9 @@
+
+config = {
+    'HOST' : 'localhost',
+    'PORT' : '6600',
+    'PASSWORD' : None,
+    'STREAM_URL' : "http://localhost:8080/mpd.mp3",
+    'TOKEN' : 'XXXXXXXXXXXX',
+    'SUPER_USER' : 'YYYYYYY',
+}

@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-07 10:10-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: main.py:48 main.py:64
+msgid "Missing argument."
+msgstr ""
+
+#: main.py:77
+msgid "You're not super user."
+msgstr ""
+
+#: main.py:184
+msgid "Nothing to play"
+msgstr ""
+
+#: main.py:186
+#, python-brace-format
+msgid ""
+"Now Playing:\n"
+"{0}"
+msgstr ""
+
+#: main.py:191
+#, python-brace-format
+msgid ""
+"Number of Songs: {0}\n"
+"Number of Albums: {1}"
+msgstr ""
+
+#: main.py:206 main.py:224 main.py:231
+msgid "No matched song."
+msgstr ""
+
+#: main.py:208
+#, python-brace-format
+msgid "Search failed. Error: {0}"
+msgstr ""
+
+#: main.py:213
+#, python-brace-format
+msgid "Adding song {0}"
+msgstr ""
+
+#: main.py:215
+#, python-brace-format
+msgid "Adding song {0} failed {1}"
+msgstr ""
+
+#: main.py:241
+msgid "No matched path."
+msgstr ""
+
+#: main.py:245
+msgid "Welcome to MPD DJ!"
+msgstr ""
+
+#: main.py:254
+#, python-brace-format
+msgid "Play stream via: {0}"
+msgstr ""
+
+#: main.py:262
+msgid "Nothing :("
+msgstr ""
+
+#: main.py:273
+msgid "Too many songs already, please wait."
+msgstr ""
+
+#: main.py:276
+msgid "This song is already ordered."
+msgstr ""
+
+#: main.py:280
+#, python-brace-format
+msgid "Ordering {0}"
+msgstr ""
+
+#: main.py:282
+#, python-brace-format
+msgid "Failed to order {0}"
+msgstr ""
+
+#: main.py:293
+msgid "Quota used up."
+msgstr ""
+
+#: main.py:307
+msgid "No history yet."
+msgstr ""
+
+#: main.py:312
+msgid "start - Description"
+msgstr ""
+
+#: main.py:313
+msgid "add - Add song"
+msgstr ""
+
+#: main.py:314
+msgid "sample - Randomly list some songs"
+msgstr ""
+
+#: main.py:315
+msgid "status - DJ Status"
+msgstr ""
+
+#: main.py:316
+msgid "stats - DJ stats"
+msgstr ""
+
+#: main.py:317
+msgid "order - Order a song"
+msgstr ""
+
+#: main.py:318
+msgid "history - Order history"
+msgstr ""
+
+#: main.py:319
+msgid "search - Search song"
+msgstr ""
+
+#: main.py:320
+msgid "searchadd - Search and add first match song"
+msgstr ""
+
+#: main.py:321
+msgid "playlist - Show current playlist"
+msgstr ""
+
+#: main.py:322
+msgid "list - List files"
+msgstr ""
+
+#: main.py:323
+msgid "stream - Get stream address"
+msgstr ""
+
+#: main.py:324
+msgid "help - Show this help"
+msgstr ""

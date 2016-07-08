@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from telegram.ext import Updater, CommandHandler
-import mpd
+import musicpd
 import random
 import os
 import sys
@@ -46,15 +46,19 @@ def access_mpd(retry=False):
         def wrap(self, *vargs, **kwargs):
             try:
                 return func(self, *vargs, **kwargs)
-            except (mpd.ConnectionError, IOError, BrokenPipeError):
+            except (musicpd.ConnectionError, IOError, BrokenPipeError):
                 pass
+            except musicpd.MPDError:
+                return
 
             try:
+                logging.log(logging.DEBUG, "Try Reconnect")
                 self.disconnect()
                 self.connect()
                 if retry:
+                    logging.log(logging.DEBUG, "Retry command")
                     return func(self, *vargs, **kwargs)
-            except (mpd.ConnectionError, IOError, BrokenPipeError):
+            except (musicpd.ConnectionError, IOError, BrokenPipeError):
                 pass
             
         return wrap
@@ -132,9 +136,9 @@ class MPDDJ(object):
     def __init__(self, config):
         self.config = config
         self.cached_songs = []
-        self.client = mpd.MPDClient()
+        self.client = musicpd.MPDClient()
         self.client.timeout = 5
-        self.idle_client = mpd.MPDClient()
+        self.idle_client = musicpd.MPDClient()
         self.idle_client.timeout = 5
         self.connected = False
         self.io_source = None
@@ -184,7 +188,7 @@ class MPDDJ(object):
             self.idle_client.send_idle(*self.watch)
             self.timeout_source = gobject.timeout_add(60000, self.fill_song)
             self.connected = True
-        except (IOError, mpd.CommandError):
+        except (IOError, musicpd.CommandError):
             gobject.timeout_add(5000, self.reconnect)
 
     def disconnect(self):
@@ -232,36 +236,45 @@ class MPDDJ(object):
         stats = self.client.stats()
         self.send_text(_("Number of Songs: {0}\nNumber of Albums: {1}").format(stats["songs"], stats["albums"]))
 
+    def search_helper(self, args):
+        search_args = []
+        for arg in args:
+            search_args.append('any')
+            search_args.append(arg)
+        return self.client.search(*search_args)
+
     @access_mpd(True)
     @command_handler()
-    @args_checker(1, ("0",))
+    @args_checker(1)
     def search(self, args):
         limit = 0
+        if len(args) > 1:
+            try:
+                limit = int(args[-1])
+                args.pop()
+            except:
+                pass
         try:
-            limit = int(args[1])
-        except:
-            pass
-        try:
-            songs = self.client.search('any', args[0])[limit:limit+5]
+            songs = self.search_helper(args)[limit:limit+5]
             if songs:
                 self.send_text("\n".join(song_info['file'] for song_info in songs))
             else:
                 self.send_text(_("No matched song."))
-        except mpd.CommandError as e:
+        except musicpd.CommandError as e:
             self.send_text(_("Search failed. Error: {0}").format(e))
 
     def add_song(self, song):
         try:
             self.client.add(song)
             self.send_text(_("Adding song {0}").format(song))
-        except mpd.CommandError as e:
+        except musicpd.CommandError as e:
             self.send_text(_("Adding song {0} failed {1}").format(song, e))
 
     @access_mpd(True)
     @command_handler(check_super_user=True)
     @args_checker(1)
     def searchadd(self, args):
-        songs = self.client.search('any', args[0])
+        songs = self.search_helper(args)
         if songs:
             self.add_song(songs[0]['file'])
         else:
@@ -271,7 +284,7 @@ class MPDDJ(object):
     @command_handler()
     @args_checker(1)
     def searchorder(self, args):
-        songs = self.client.search('any', args[0])
+        songs = self.search_helper(args)
         if songs:
             self.order_song([song_info['file'] for song_info in songs if 'file' in song_info])
         else:
@@ -323,9 +336,18 @@ class MPDDJ(object):
             self.quota[user] = Quota(user)
         return self.quota[user]
 
+    def is_ordered(self, song):
+        for quota in self.quota.values():
+            for (_song, time) in quota.history:
+                if song == _song:
+                    return True
+
+        return False
+
     def order_song(self, song):
         quota = self.get_quota(self.update.message.from_user.username)
-        if quota.can_order() or quota.username == self.config['SUPER_USER'] or self.alone():
+        alone = self.alone()
+        if quota.can_order() or quota.username == self.config['SUPER_USER'] or alone:
             try:
                 playlist = self.client.playlistinfo()
                 if len(playlist) > 15:
@@ -345,10 +367,23 @@ class MPDDJ(object):
                     if any(song_info['file'] == song for song_info in playlist):
                         self.send_text(_('This song is already ordered.'))
                         return
-                self.client.add(song)
+                self.client.command_list_ok_begin()
+                prefix = ''
+                if alone:
+                    prefix = _('So lonely.. let me play for you immediately.') + '\n'
+                    self.client.addid(song, 0)
+                    self.client.play(0)
+                    self.client.delete((1,))
+                else:
+                    if len(playlist) == 2 and not self.is_ordered(playlist[1]['file']):
+                        self.client.addid(song, 1)
+                        self.client.delete((2,))
+                    else:
+                        self.client.add(song)
+                self.client.command_list_end()
                 quota.order(song)
-                self.send_text(_('Ordering {0}').format(song))
-            except mpd.CommandError as e:
+                self.send_text(prefix + _('Ordering {0}').format(song))
+            except musicpd.CommandError as e:
                 self.send_text(_('Failed to order {0}').format(e))
         else:
             self.send_text(_("Quota used up."))

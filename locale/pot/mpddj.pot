@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-07 12:03-0700\n"
+"POT-Creation-Date: 2016-07-07 21:04-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,146 +17,150 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:63 main.py:79
+#: main.py:78 main.py:94
 msgid "Missing argument."
 msgstr ""
 
-#: main.py:95
+#: main.py:110
 msgid "You're not super user."
 msgstr ""
 
-#: main.py:204
+#: main.py:229
 msgid "Nothing to play"
 msgstr ""
 
-#: main.py:206
+#: main.py:231
 #, python-brace-format
 msgid ""
 "Now Playing:\n"
 "{0}"
 msgstr ""
 
-#: main.py:212
+#: main.py:237
 #, python-brace-format
 msgid ""
 "Number of Songs: {0}\n"
 "Number of Albums: {1}"
 msgstr ""
 
-#: main.py:228 main.py:247 main.py:257 main.py:264
+#: main.py:262 main.py:281 main.py:291 main.py:298
 msgid "No matched song."
 msgstr ""
 
-#: main.py:230
+#: main.py:264
 #, python-brace-format
 msgid "Search failed. Error: {0}"
 msgstr ""
 
-#: main.py:235
+#: main.py:269
 #, python-brace-format
 msgid "Adding song {0}"
 msgstr ""
 
-#: main.py:237
+#: main.py:271
 #, python-brace-format
 msgid "Adding song {0} failed {1}"
 msgstr ""
 
-#: main.py:275
+#: main.py:309
 msgid "No matched path."
 msgstr ""
 
-#: main.py:279
+#: main.py:313
 msgid "Welcome to MPD DJ!"
 msgstr ""
 
-#: main.py:289
+#: main.py:323
 #, python-brace-format
 msgid "Play stream via: {0}"
 msgstr ""
 
-#: main.py:298
+#: main.py:332
 msgid "Nothing :("
 msgstr ""
 
-#: main.py:311
+#: main.py:354
 msgid "Too many songs already, please wait."
 msgstr ""
 
-#: main.py:320 main.py:325
+#: main.py:363 main.py:368
 msgid "This song is already ordered."
 msgstr ""
 
-#: main.py:329
+#: main.py:373
+msgid "So lonely.. let me play for you immediately."
+msgstr ""
+
+#: main.py:385
 #, python-brace-format
 msgid "Ordering {0}"
 msgstr ""
 
-#: main.py:331
+#: main.py:387
 #, python-brace-format
 msgid "Failed to order {0}"
 msgstr ""
 
-#: main.py:333
+#: main.py:389
 msgid "Quota used up."
 msgstr ""
 
-#: main.py:355
+#: main.py:411
 msgid "No history yet."
 msgstr ""
 
-#: main.py:360
+#: main.py:416
 msgid "start - Description"
 msgstr ""
 
-#: main.py:361
+#: main.py:417
 msgid "add - Add song"
 msgstr ""
 
-#: main.py:362
+#: main.py:418
 msgid "sample - Randomly list some songs"
 msgstr ""
 
-#: main.py:363
+#: main.py:419
 msgid "status - DJ Status"
 msgstr ""
 
-#: main.py:364
+#: main.py:420
 msgid "stats - DJ stats"
 msgstr ""
 
-#: main.py:365
+#: main.py:421
 msgid "order - Order a song"
 msgstr ""
 
-#: main.py:366
+#: main.py:422
 msgid "searchorder - Search and order first match song"
 msgstr ""
 
-#: main.py:367
+#: main.py:423
 msgid "history - Order history"
 msgstr ""
 
-#: main.py:368
+#: main.py:424
 msgid "search - Search song"
 msgstr ""
 
-#: main.py:369
+#: main.py:425
 msgid "searchadd - Search and add first match song"
 msgstr ""
 
-#: main.py:370
+#: main.py:426
 msgid "playlist - Show current playlist"
 msgstr ""
 
-#: main.py:371
+#: main.py:427
 msgid "list - List files"
 msgstr ""
 
-#: main.py:372
+#: main.py:428
 msgid "stream - Get stream address"
 msgstr ""
 
-#: main.py:373
+#: main.py:429
 msgid "help - Show this help"
 msgstr ""

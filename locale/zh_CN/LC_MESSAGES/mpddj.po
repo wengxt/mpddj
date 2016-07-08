@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-07 10:09-0700\n"
+"POT-Creation-Date: 2016-07-07 12:03-0700\n"
 "PO-Revision-Date: 2016-07-07 10:08-0800\n"
 "Last-Translator: Weng Xuetian <wengxt@gmail.com>\n"
 "Language-Team: Chinese <kde-i18n-doc@kde.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: main.py:48 main.py:64
+#: main.py:63 main.py:79
 msgid "Missing argument."
 msgstr "缺少参数。"
 
-#: main.py:77
+#: main.py:95
 msgid "You're not super user."
 msgstr "你不是人家的主人啦！"
 
-#: main.py:184
+#: main.py:204
 msgid "Nothing to play"
 msgstr "没有可以播放的歌曲"
 
-#: main.py:186
+#: main.py:206
 #, python-brace-format
 msgid ""
 "Now Playing:\n"
@@ -38,7 +38,7 @@ msgstr ""
 "正在播放：\n"
 "{0}"
 
-#: main.py:191
+#: main.py:212
 #, python-brace-format
 msgid ""
 "Number of Songs: {0}\n"
@@ -47,116 +47,121 @@ msgstr ""
 "歌曲数：{0}\n"
 "专辑数：{1}"
 
-#: main.py:206 main.py:224 main.py:231
+#: main.py:228 main.py:247 main.py:257 main.py:264
 msgid "No matched song."
 msgstr "没有匹配的歌曲。"
 
-#: main.py:208
+#: main.py:230
 #, python-brace-format
 msgid "Search failed. Error: {0}"
 msgstr "搜索失败。错误：{0}"
 
-#: main.py:213
+#: main.py:235
 #, python-brace-format
 msgid "Adding song {0}"
 msgstr "添加歌曲 {0}"
 
-#: main.py:215
+#: main.py:237
 #, python-brace-format
 msgid "Adding song {0} failed {1}"
 msgstr "添加歌曲 {0} 失败 {1}"
 
-#: main.py:241
+#: main.py:275
 msgid "No matched path."
 msgstr "没有匹配的路径。"
 
-#: main.py:245
+#: main.py:279
 msgid "Welcome to MPD DJ!"
 msgstr "欢迎使用点歌姬哟～！"
 
-#: main.py:254
+#: main.py:289
 #, python-brace-format
 msgid "Play stream via: {0}"
 msgstr "播放地址：{0}"
 
-#: main.py:262
+#: main.py:298
 msgid "Nothing :("
 msgstr "什么也没有 :("
 
-#: main.py:273
+#: main.py:311
 msgid "Too many songs already, please wait."
 msgstr "你们要把人家玩坏啦！快去歇会！"
 
-#: main.py:276
+#: main.py:320 main.py:325
 msgid "This song is already ordered."
 msgstr "这首歌已经被点过了呢～"
 
-#: main.py:280
+#: main.py:329
 #, python-brace-format
 msgid "Ordering {0}"
 msgstr "正在点播 {0}"
 
-#: main.py:282
+#: main.py:331
 #, python-brace-format
 msgid "Failed to order {0}"
 msgstr "点播 {0} 失败"
 
-#: main.py:293
+#: main.py:333
 msgid "Quota used up."
 msgstr "你玩人家玩得太多啦！去歇会！"
 
-#: main.py:307
+#: main.py:355
 msgid "No history yet."
 msgstr "还没有人陪我玩呢 :'("
 
-#: main.py:312
+#: main.py:360
 msgid "start - Description"
 msgstr "start - 说明"
 
-#: main.py:313
+#: main.py:361
 msgid "add - Add song"
 msgstr "add - 添加歌曲"
 
-#: main.py:314
+#: main.py:362
 msgid "sample - Randomly list some songs"
 msgstr "sample - 随机列出一些歌曲 "
 
-#: main.py:315
+#: main.py:363
 msgid "status - DJ Status"
 msgstr "status - 点歌姬的状态"
 
-#: main.py:316
+#: main.py:364
 msgid "stats - DJ stats"
 msgstr "stats - 点歌姬的统计信息"
 
-#: main.py:317
+#: main.py:365
 msgid "order - Order a song"
 msgstr "order - 点播歌曲"
 
-#: main.py:318
+#: main.py:366
+#, fuzzy
+msgid "searchorder - Search and order first match song"
+msgstr "searchadd - 搜索并添加第一首匹配歌曲"
+
+#: main.py:367
 msgid "history - Order history"
 msgstr "history - 点播历史"
 
-#: main.py:319
+#: main.py:368
 msgid "search - Search song"
 msgstr "search - 搜索歌曲"
 
-#: main.py:320
+#: main.py:369
 msgid "searchadd - Search and add first match song"
 msgstr "searchadd - 搜索并添加第一首匹配歌曲"
 
-#: main.py:321
+#: main.py:370
 msgid "playlist - Show current playlist"
 msgstr "playlist - 显示当前播放列表"
 
-#: main.py:322
+#: main.py:371
 msgid "list - List files"
 msgstr "list - 列出文件"
 
-#: main.py:323
+#: main.py:372
 msgid "stream - Get stream address"
 msgstr "stream - 获得流地址"
 
-#: main.py:324
+#: main.py:373
 msgid "help - Show this help"
 msgstr "help - 显示本帮助"

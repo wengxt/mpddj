@@ -23,7 +23,8 @@ def basename_noext(name):
     return os.path.splitext(os.path.basename(name))[0]
 
 def is_vocal(song):
-    return 'vocal' in song.lower() or 'instrumental' in song.lower()
+    lower = song.lower()
+    return 'vocal' in lower or 'inst' in lower or 'tv size' in lower
 
 def format_path(path, *path2):
     return os.path.normpath(os.path.join(path.strip('/'), *path2))
@@ -40,14 +41,24 @@ def format_song_info(song_info):
             result += song_info[field]
     return result
 
-def access_mpd(func):
-    def wrap(self, *vargs, **kwargs):
-        try:
-            return func(self, *vargs, **kwargs)
-        except (mpd.ConnectionError, IOError, BrokenPipeError):
-            self.disconnect()
-            self.connect()
-    return wrap
+def access_mpd(retry=False):
+    def access_mpd_decorator(func):
+        def wrap(self, *vargs, **kwargs):
+            try:
+                return func(self, *vargs, **kwargs)
+            except (mpd.ConnectionError, IOError, BrokenPipeError):
+                pass
+
+            try:
+                self.disconnect()
+                self.connect()
+                if retry:
+                    return func(self, *vargs, **kwargs)
+            except (mpd.ConnectionError, IOError, BrokenPipeError):
+                pass
+            
+        return wrap
+    return access_mpd_decorator
 
 def string_arg_checker(default=None):
     def string_arg_checker_decorator(func):
@@ -162,15 +173,15 @@ class MPDDJ(object):
             if self.config['PASSWORD']:
                 self.client.password(self.config['PASSWORD'])
                 self.idle_client.password(self.config['PASSWORD'])
-            self.idle_client.send_idle(*self.watch)
             self.client.consume(1)
             self.client.random(0)
-            self.update()
+            self.refresh_cache()
             self.fill_song()
             status = self.client.status()
             if status['state'] != 'play':
                 self.client.play()
             self.io_source = gobject.io_add_watch(self.idle_client, gobject.IO_IN, self.idle_callback)
+            self.idle_client.send_idle(*self.watch)
             self.timeout_source = gobject.timeout_add(60000, self.fill_song)
             self.connected = True
         except (IOError, mpd.CommandError):
@@ -187,7 +198,17 @@ class MPDDJ(object):
             self.timeout_source = None
         self.connected = False
 
-    def update(self):
+    def alone(self):
+        playlist = self.client.playlistinfo()
+        files = {song_info['file'] for song_info in playlist}
+        for quota in self.quota.values():
+            for (song, time) in quota.history:
+                if song in files:
+                    return False
+        return True
+
+
+    def refresh_cache(self):
         cached_songs = self.client.list('file')
         self.cached_songs = []
         for song in cached_songs:
@@ -196,7 +217,7 @@ class MPDDJ(object):
                 continue
             self.cached_songs.append(song)
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     def status(self):
         song_info = self.client.currentsong()
@@ -205,13 +226,13 @@ class MPDDJ(object):
         else:
             self.send_text(_("Now Playing:\n{0}").format(format_song_info(song_info)))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     def stats(self):
         stats = self.client.stats()
         self.send_text(_("Number of Songs: {0}\nNumber of Albums: {1}").format(stats["songs"], stats["albums"]))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     @args_checker(1, ("0",))
     def search(self, args):
@@ -236,7 +257,7 @@ class MPDDJ(object):
         except mpd.CommandError as e:
             self.send_text(_("Adding song {0} failed {1}").format(song, e))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler(check_super_user=True)
     @args_checker(1)
     def searchadd(self, args):
@@ -246,7 +267,7 @@ class MPDDJ(object):
         else:
             self.send_text(_("No matched song."))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     @args_checker(1)
     def searchorder(self, args):
@@ -263,7 +284,7 @@ class MPDDJ(object):
         else:
             self.send_text(_("No matched song."))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     @string_arg_checker("/")
     def list_files(self, path):
@@ -278,7 +299,7 @@ class MPDDJ(object):
     def start(self):
         self.send_text(_('Welcome to MPD DJ!'))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler(check_super_user=True)
     @string_arg_checker()
     def add(self, path):
@@ -288,7 +309,7 @@ class MPDDJ(object):
     def stream(self):
         self.send_text(_("Play stream via: {0}").format(self.config['STREAM_URL']))
 
-    @access_mpd
+    @access_mpd(True)
     @command_handler()
     def playlist(self):
         playlist = self.client.playlistinfo()
@@ -304,7 +325,7 @@ class MPDDJ(object):
 
     def order_song(self, song):
         quota = self.get_quota(self.update.message.from_user.username)
-        if quota.can_order() or quota.username == self.config['SUPER_USER']:
+        if quota.can_order() or quota.username == self.config['SUPER_USER'] or self.alone():
             try:
                 playlist = self.client.playlistinfo()
                 if len(playlist) > 15:
@@ -377,9 +398,8 @@ class MPDDJ(object):
     def rebuild_state(self):
         pass
 
-    watch = ('update', 'playlist')
+    watch = ('database', 'playlist')
 
-    @access_mpd
     def fill_song(self):
         playlist = self.client.playlistinfo()
         if len(playlist) <= 1 and self.cached_songs:
@@ -387,17 +407,17 @@ class MPDDJ(object):
             self.client.add(song)
             self.client.play()
 
-    @access_mpd
+    @access_mpd()
     def idle_callback(self, source, condition):
         changes = self.idle_client.fetch_idle()
         print(changes)
         for c in changes:
-            if c == 'update':
-                self.update()
+            if c == 'database':
+                self.refresh_cache()
             elif c == 'playlist':
                 self.fill_song()
         self.idle_client.send_idle(*self.watch)
-        return True # removes the IO watcher
+        return True
 
     def refresh_quota(self):
         for quota in self.quota.values():

@@ -328,7 +328,7 @@ class MPDDJ(object):
     def list_files(self, path):
         files = self.client.lsinfo(path.strip('/'))
         if files:
-            result = "\n".join([format_path(path, item["directory"]) + '/' for item in files if 'directory' in item and not item['directory'].startswith('.')] + [format_path(path, item["file"]) for item in files if 'file' in item and not item['file'].startswith('.') and item['file'].endswith('.mp3')])
+            result = "\n".join([format_path(item["directory"]) + '/' for item in files if 'directory' in item and not item['directory'].startswith('.')] + [format_path(item["file"]) for item in files if 'file' in item and not item['file'].startswith('.') and item['file'].endswith('.mp3')])
             self.send_text(result)
         else:
             self.send_text(_("No matched path."))

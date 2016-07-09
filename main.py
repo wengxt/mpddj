@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from telegram.ext import Updater, CommandHandler
+import pickle
 import musicpd
 import random
 import os
@@ -58,8 +59,8 @@ def access_mpd(retry=False):
                 if retry:
                     logging.log(logging.DEBUG, "Retry command")
                     return func(self, *vargs, **kwargs)
-            except (musicpd.ConnectionError, IOError, BrokenPipeError):
-                pass
+            except (musicpd.ConnectionError, IOError, BrokenPipeError) as e:
+                logging.log(logging.DEBUG, "{0}".format(e))
             
         return wrap
     return access_mpd_decorator
@@ -115,6 +116,9 @@ def command_handler(check_super_user = False):
 class Quota(object):
     limit = 5
 
+    def __repr__(self):
+        return "Quota({0}, {1}".format(self.username, self.history)
+
     def __init__(self, username):
         self.history = []
         self.username = username
@@ -127,7 +131,7 @@ class Quota(object):
 
     def refresh(self):
         now = time.time()
-        self.history = [hist for hist in self.history if hist[1] + 3600 < now]
+        self.history = [hist for hist in self.history if hist[1] + 3600 > now]
 
     def can_order(self):
         return len(self.history) < self.limit
@@ -144,7 +148,17 @@ class MPDDJ(object):
         self.io_source = None
         self.timeout_source = None
 
-        self.quota = dict()
+        self.quota = None
+        try:
+            with open('history.pickle', 'rb') as handle:
+                self.quota = pickle.load(handle)
+                print(self.quota)
+        except Exception as e:
+            logging.log(logging.DEBUG, "LOAD Hist : {0}".format(e))
+        print(self.quota)
+        if not isinstance(self.quota, dict):
+            self.quota = dict()
+        print(self.quota)
 
         self.updater = Updater(self.config['TOKEN'])
 
@@ -167,6 +181,8 @@ class MPDDJ(object):
         self.bot.sendMessage(self.update.message.chat_id, text=text, reply_to_message_id=self.update.message.message_id)
 
     def reconnect(self):
+        logging.log(logging.DEBUG, "reconnect")
+        self.disconnect()
         self.connect()
         return False
 
@@ -188,16 +204,25 @@ class MPDDJ(object):
             self.idle_client.send_idle(*self.watch)
             self.timeout_source = gobject.timeout_add(60000, self.fill_song)
             self.connected = True
-        except (IOError, musicpd.CommandError):
+        except (IOError, musicpd.ConnectionError, musicpd.CommandError):
+            logging.log(logging.DEBUG, "Place reconnect")
             gobject.timeout_add(5000, self.reconnect)
+        except Exception as e:
+            logging.log(logging.DEBUG, "CONECT ERROR: {0}".format(e))
 
     def disconnect(self):
-        self.client.disconnect()
-        self.idle_client.disconnect()
-        if self.io_source:
+        try:
+            self.client.disconnect()
+        except:
+            pass
+        try:
+            self.idle_client.disconnect()
+        except:
+            pass
+        if self.io_source is not None:
             gobject.source_remove(self.io_source)
             self.io_source = None
-        if self.timeout_source:
+        if self.timeout_source is not None:
             gobject.source_remove(self.timeout_source)
             self.timeout_source = None
         self.connected = False
@@ -301,7 +326,7 @@ class MPDDJ(object):
     @command_handler()
     @string_arg_checker("/")
     def list_files(self, path):
-        files = self.client.listfiles(path)
+        files = self.client.lsinfo(path.strip('/'))
         if files:
             result = "\n".join([format_path(path, item["directory"]) + '/' for item in files if 'directory' in item and not item['directory'].startswith('.')] + [format_path(path, item["file"]) for item in files if 'file' in item and not item['file'].startswith('.') and item['file'].endswith('.mp3')])
             self.send_text(result)
@@ -367,6 +392,7 @@ class MPDDJ(object):
                     if any(song_info['file'] == song for song_info in playlist):
                         self.send_text(_('This song is already ordered.'))
                         return
+                quota.order(song)
                 self.client.command_list_ok_begin()
                 prefix = ''
                 if alone:
@@ -381,7 +407,6 @@ class MPDDJ(object):
                     else:
                         self.client.add(song)
                 self.client.command_list_end()
-                quota.order(song)
                 self.send_text(prefix + _('Ordering {0}').format(song))
             except musicpd.CommandError as e:
                 self.send_text(_('Failed to order {0}').format(e))
@@ -399,12 +424,15 @@ class MPDDJ(object):
     @command_handler()
     def history(self):
         history = []
+        print(self.quota)
         for quota in self.quota.values():
             for hist in quota.history:
                 history.append((quota.username, hist))
 
+        print(history)
         # sort by time, top 10
         recent = sorted(history, key=lambda hist: -hist[1][1])[0:10]
+        print(recent)
         if recent:
             self.send_text('\n'.join('@{0}: {1}'.format(username, basename_noext(song)) for username, (song, time) in reversed(recent)))
         else:
@@ -455,6 +483,7 @@ class MPDDJ(object):
         return True
 
     def refresh_quota(self):
+        logging.log(logging.DEBUG, 'refresh_Quota')
         for quota in self.quota.values():
             quota.refresh()
 
@@ -465,13 +494,16 @@ class MPDDJ(object):
         self.connect()
         self.updater.start_polling()
 
-        gobject.timeout_add(60000, self.refresh_quota)
+        gobject.timeout_add(6000, self.refresh_quota)
 
         try:
             gobject.MainLoop().run()
         except (KeyboardInterrupt, SystemExit):
+            logging.log(logging.DEBUG, "Exit")
             gobject.MainLoop().quit()
             self.updater.stop()
+            with open('history.pickle', 'wb') as handle:
+                pickle.dump(self.quota, handle)
 
     def signal_handler(self, signum, frame):
         gobject.MainLoop().quit()

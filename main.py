@@ -114,13 +114,15 @@ def command_handler(check_super_user = False):
 
 
 class Quota(object):
-    limit = 5
+    limit = 10
+    next_limit = 5
 
     def __repr__(self):
         return "Quota({0}, {1}".format(self.username, self.history)
 
     def __init__(self, username):
         self.history = []
+        self.next_quota = 0
         self.username = username
 
     def order(self, song):
@@ -129,12 +131,19 @@ class Quota(object):
         if len(self.history) > self.limit:
             self.history.pop(0)
 
+    def next_song(self):
+        self.next_quota -= 1
+
     def refresh(self):
         now = time.time()
         self.history = [hist for hist in self.history if hist[1] + 3600 > now]
+        self.next_quota = self.next_limit
 
     def can_order(self):
         return len(self.history) < self.limit
+
+    def can_next(self):
+        return self.next_quota > 0
 
 class MPDDJ(object):
     def __init__(self, config):
@@ -175,6 +184,7 @@ class MPDDJ(object):
         self.updater.dispatcher.add_handler(CommandHandler('playlist', self.playlist))
         self.updater.dispatcher.add_handler(CommandHandler('list', self.list_files, pass_args=True))
         self.updater.dispatcher.add_handler(CommandHandler('stream', self.stream))
+        self.updater.dispatcher.add_handler(CommandHandler('next', self.next_song))
         self.updater.dispatcher.add_handler(CommandHandler('help', self.help))
 
     def send_text(self, text):
@@ -349,6 +359,18 @@ class MPDDJ(object):
 
     @access_mpd(True)
     @command_handler()
+    def next_song(self):
+        quota = self.get_quota(self.update.message.from_user.username)
+        alone = self.alone()
+        if quota.can_next() or quota.username == self.config['SUPER_USER'] or alone:
+            self.client.next()
+            quota.next_song()
+            self.send_text(_("Skip current song"))
+        else:
+            self.send_text(_("Abuse is not allowed!"))
+
+    @access_mpd(True)
+    @command_handler()
     def playlist(self):
         playlist = self.client.playlistinfo()
         if playlist:
@@ -448,6 +470,7 @@ class MPDDJ(object):
             _("stats - DJ stats"),
             _("order - Order a song"),
             _("searchorder - Search and order first match song"),
+            _("next - Skip current song"),
             _("history - Order history"),
             _("search - Search song"),
             _("searchadd - Search and add first match song"),

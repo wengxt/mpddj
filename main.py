@@ -413,7 +413,7 @@ class MPDDJ(object):
         else:
             self.send_text(_("Quota used up."))
 
-
+    @access_mpd(True)
     @command_handler()
     @string_arg_checker('')
     def order(self, path):
